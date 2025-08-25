@@ -1,0 +1,54 @@
+fail_fast: true
+
+repos:
+  # Remover espaços finais / \n no fim do arquivo
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+        files: '^(app|tests)/'
+      - id: end-of-file-fixer
+        files: '^(app|tests)/'
+
+  # Ruff - format
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: ruff (format)
+        entry: uv run ruff format
+        language: system
+        types: [python]
+        files: '^(app|tests)/'
+
+  # Ruff - fix
+  - repo: local
+    hooks:
+      - id: ruff-fix
+        name: ruff (fix)
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+        files: '^(app|tests)/'
+
+  # mypy - type check
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy (type check)
+        entry: uv run mypy app tests
+        language: system
+        types: [python]
+        pass_filenames: false
+        files: '^(app|tests)/'
+
+  # python tests
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest (unit tests)
+        entry: uv run pytest
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        files: '^tests/'
